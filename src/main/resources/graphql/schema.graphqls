@@ -1,0 +1,96 @@
+type Baggage {
+    id: ID!
+    reservation: Reservation
+    baggageType: String!
+    baggageLocation: String!
+    description: String
+    basePrice: Float!
+    additionalCharge: Float!
+    dimensions: Float
+    weight: Float
+    quantity: Int
+    totalCost: Float!
+    payment: Payment
+}
+
+type Reservation {
+    id: ID!
+    originCity: String!
+    destinationCity: String!
+    departureDate: String!
+    returnDate: String!
+    seat: String
+    passenger: Passenger
+    baggage: [Baggage!]!
+}
+
+type Passenger {
+    id: ID!
+    firstName: String!
+    lastName: String!
+    birthDate: String!
+    nationality: String!
+    passportNumber: String!
+    email: String!
+    phone: String!
+    reservations: [Reservation!]!
+}
+
+type Payment {
+    id: ID!
+    additionalCharge: Float!
+    totalAmount: Float!
+    paymentDate: String!
+}
+
+type Query {
+    allBaggage: [Baggage]
+    baggageById(id: ID!): Baggage
+    allPassengers: [Passenger]
+    passengerById(id: ID!): Passenger
+    allReservations: [Reservation]
+    reservationById(id: ID!): Reservation
+}
+
+type Mutation {
+    addBaggage(
+        reservationId: ID!,
+        baggageType: String!,
+        baggageLocation: String!,
+        description: String,
+        basePrice: Float!,
+        additionalCharge: Float!,
+        dimensions: Float,
+        weight: Float,
+        quantity: Int,
+        totalCost: Float!
+    ): Baggage
+
+    addPassenger(
+        firstName: String!,
+        lastName: String!,
+        birthDate: String!,
+        nationality: String!,
+        passportNumber: String!,
+        email: String!,
+        phone: String!
+    ): Passenger
+
+    makeReservation(
+        passengerId: ID!,
+        reservationDate: String!,
+        reservationTime: String!,
+        originCity: String!,
+        destinationCity: String!,
+        departureDate: String!,
+        returnDate: String!,
+        seat: String!
+    ): Reservation
+
+    recordPayment(
+        baggageId: ID!,
+        additionalCharge: Float!,
+        totalAmount: Float!,
+        paymentDate: String!
+    ): Payment
+}
