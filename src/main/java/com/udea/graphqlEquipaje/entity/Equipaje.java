@@ -8,27 +8,32 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "baggage")
-public class Baggage {
+@Table(name = "equipaje")
+public class Equipaje {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Float alto;
+    private Float largo;
+    private Float ancho;
+    private Float peso;
+
+    @Column(nullable = false)
+    private String tipo;
+
+    @Column(nullable = false)
+    private String ubicacion;
+
+    @Column(nullable = false)
+    private Float valor;
+
     @ManyToOne
-    @JoinColumn(name = "reservation_id")
-    private Reservation reservation;
+    @JoinColumn(name = "vuelo_id")
+    private Vuelo vuelo;
 
-    private String baggageType;
-    private String baggageLocation;
-    private String description;
-    private Float basePrice;
-    private Float additionalCharge;
-    private Float dimensions;
-    private Float weight;
-    private int quantity;
-    private Float totalCost;
-
-    @OneToOne(mappedBy = "baggage", cascade = CascadeType.ALL)
-    private Payment payment;
+    @ManyToOne
+    @JoinColumn(name = "pasajero_id")
+    private Pasajero pasajero;
 }

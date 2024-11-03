@@ -6,6 +6,6 @@ RUN mvn clean package -DskipTests
 
 # Use the official OpenJDK image to run the app
 FROM openjdk:11-jre-slim
-COPY --from=build /app/target/graphqlequipaje-0.0.1-SNAPSHOT.jar /usr/local/lib/graphqlequipaje.jar
+COPY --from=build /app/target/ModuloEquipageB-0.0.1-SNAPSHOT.jar /usr/local/lib/ModuloEquipageB.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "/usr/local/lib/graphqlequipaje.jar"]
+ENTRYPOINT ["java", "-jar", "/usr/local/lib/ModuloEquipaje.jar"]

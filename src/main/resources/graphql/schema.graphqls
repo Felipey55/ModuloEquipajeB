@@ -1,96 +1,68 @@
-type Baggage {
+type Equipaje {
     id: ID!
-    reservation: Reservation
-    baggageType: String!
-    baggageLocation: String!
-    description: String
-    basePrice: Float!
-    additionalCharge: Float!
-    dimensions: Float
-    weight: Float
-    quantity: Int
-    totalCost: Float!
-    payment: Payment
+    alto: Float
+    largo: Float
+    ancho: Float
+    peso: Float
+    tipo: String!
+    ubicacion: String!
+    valor: Float!
+    vuelo: Vuelo
+    pasajero: Pasajero
 }
 
-type Reservation {
+type Vuelo {
     id: ID!
-    originCity: String!
-    destinationCity: String!
-    departureDate: String!
-    returnDate: String!
-    seat: String
-    passenger: Passenger
-    baggage: [Baggage!]!
+    numeroVuelo: String!
+    origen: String!
+    destino: String!
+    fechaSalida: String!
 }
 
-type Passenger {
+type Pasajero {
     id: ID!
-    firstName: String!
-    lastName: String!
-    birthDate: String!
-    nationality: String!
-    passportNumber: String!
-    email: String!
-    phone: String!
-    reservations: [Reservation!]!
-}
-
-type Payment {
-    id: ID!
-    additionalCharge: Float!
-    totalAmount: Float!
-    paymentDate: String!
+    nombre: String!
+    apellido: String!
+    numeroPasaporte: String!
+    nacionalidad: String!
 }
 
 type Query {
-    allBaggage: [Baggage]
-    baggageById(id: ID!): Baggage
-    allPassengers: [Passenger]
-    passengerById(id: ID!): Passenger
-    allReservations: [Reservation]
-    reservationById(id: ID!): Reservation
+    # Listar todos los equipajes
+    todosLosEquipajes: [Equipaje]
+
+    # Buscar equipaje por ID
+    equipajePorId(id: ID!): Equipaje
 }
 
 type Mutation {
-    addBaggage(
-        reservationId: ID!,
-        baggageType: String!,
-        baggageLocation: String!,
-        description: String,
-        basePrice: Float!,
-        additionalCharge: Float!,
-        dimensions: Float,
-        weight: Float,
-        quantity: Int,
-        totalCost: Float!
-    ): Baggage
+    # Agregar nuevo equipaje
+    agregarEquipaje(
+        alto: Float,
+        largo: Float,
+        ancho: Float,
+        peso: Float,
+        tipo: String!,
+        ubicacion: String!,
+        valor: Float!,
+        vueloId: ID!,
+        pasajeroId: ID!
+    ): Equipaje
 
-    addPassenger(
-        firstName: String!,
-        lastName: String!,
-        birthDate: String!,
-        nationality: String!,
-        passportNumber: String!,
-        email: String!,
-        phone: String!
-    ): Passenger
+    # Eliminar equipaje por ID
+    eliminarEquipaje(id: ID!): Equipaje
 
-    makeReservation(
-        passengerId: ID!,
-        reservationDate: String!,
-        reservationTime: String!,
-        originCity: String!,
-        destinationCity: String!,
-        departureDate: String!,
-        returnDate: String!,
-        seat: String!
-    ): Reservation
-
-    recordPayment(
-        baggageId: ID!,
-        additionalCharge: Float!,
-        totalAmount: Float!,
-        paymentDate: String!
-    ): Payment
+    # Editar equipaje por ID
+    actualizarEquipaje(
+        id: ID!,
+        alto: Float,
+        largo: Float,
+        ancho: Float,
+        peso: Float,
+        tipo: String,
+        ubicacion: String,
+        valor: Float,
+        vueloId: ID,
+        pasajeroId: ID
+    ): Equipaje
 }

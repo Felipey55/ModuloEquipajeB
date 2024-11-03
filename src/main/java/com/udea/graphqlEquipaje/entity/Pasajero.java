@@ -1,39 +1,35 @@
 package com.udea.graphqlEquipaje.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "equipaje")
-public class Equipaje {
+@Table(name = "pasajero")
+public class Pasajero {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Float alto;
-    private Float largo;
-    private Float ancho;
-    private Float peso;
+    @Column(nullable = false)
+    private String nombre;
 
     @Column(nullable = false)
-    private String tipo;
+    private String apellido;
+
+    @Column(nullable = false, unique = true)
+    private String numeroPasaporte;
 
     @Column(nullable = false)
-    private String ubicacion;
+    private String nacionalidad;
 
-    @Column(nullable = false)
-    private Float valor;
-
-    @ManyToOne
-    @JoinColumn(name = "vuelo_id")
-    private Vuelo vuelo;
-
-    @ManyToOne
-    @JoinColumn(name = "pasajero_id")
-    private Pasajero pasajero;
+    @OneToMany(mappedBy = "pasajero")
+    private List<Equipaje> equipajes;
 }

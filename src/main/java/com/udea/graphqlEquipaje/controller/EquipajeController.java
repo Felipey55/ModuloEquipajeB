@@ -1,45 +1,86 @@
 package com.udea.graphqlEquipaje.controller;
 
-import com.udea.graphqlEquipaje.entity.Reservation;
-import com.udea.graphqlEquipaje.service.ReservationService;
+import com.udea.graphqlEquipaje.entity.Equipaje;
+import com.udea.graphqlEquipaje.repository.EquipajeRepository;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 @Controller
-public class ReservationController {
+public class EquipajeController {
 
-    private final ReservationService reservationService;
+    private final EquipajeRepository equipajeRepository;
 
-    public ReservationController(ReservationService reservationService) {
-        this.reservationService = reservationService;
+    public EquipajeController(EquipajeRepository equipajeRepository) {
+        this.equipajeRepository = equipajeRepository;
     }
 
     @QueryMapping
-    public List<Reservation> allReservations() {
-        return reservationService.getAllReservations();
+    public List<Equipaje> todosLosEquipajes() {
+        return equipajeRepository.findAll();
     }
 
     @QueryMapping
-    public Reservation reservationById(@Argument Long id) {
-        return reservationService.getReservationById(id);
+    public Equipaje equipajePorId(@Argument Long id) {
+        return equipajeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Equipaje no encontrado"));
     }
 
     @MutationMapping
-    public Reservation makeReservation(@Argument Long passengerId, @Argument String reservationDate,
-                                       @Argument String reservationTime, @Argument String originCity,
-                                       @Argument String destinationCity, @Argument String departureDate,
-                                       @Argument String returnDate, @Argument String seat) {
-        LocalDate resDate = LocalDate.parse(reservationDate);
-        LocalTime resTime = LocalTime.parse(reservationTime);
-        LocalDate depDate = LocalDate.parse(departureDate);
-        LocalDate retDate = returnDate != null ? LocalDate.parse(returnDate) : null;
+    public Equipaje agregarEquipaje(
+            @Argument Float alto,
+            @Argument Float largo,
+            @Argument Float ancho,
+            @Argument Float peso,
+            @Argument String tipo,
+            @Argument String ubicacion,
+            @Argument Float valor
+    ) {
+        Equipaje equipaje = new Equipaje();
+        equipaje.setAlto(alto);
+        equipaje.setLargo(largo);
+        equipaje.setAncho(ancho);
+        equipaje.setPeso(peso);
+        equipaje.setTipo(tipo);
+        equipaje.setUbicacion(ubicacion);
+        equipaje.setValor(valor);
 
-        return reservationService.makeReservation(passengerId, resDate, resTime, originCity, destinationCity, depDate, retDate, seat);
+        return equipajeRepository.save(equipaje);
+    }
+
+    @MutationMapping
+    public Equipaje eliminarEquipaje(@Argument Long id) {
+        Equipaje equipaje = equipajeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Equipaje no encontrado con ID: " + id));
+        equipajeRepository.deleteById(id);
+        return equipaje;
+    }
+
+    @MutationMapping
+    public Equipaje actualizarEquipaje(
+            @Argument Long id,
+            @Argument Float alto,
+            @Argument Float largo,
+            @Argument Float ancho,
+            @Argument Float peso,
+            @Argument String tipo,
+            @Argument String ubicacion,
+            @Argument Float valor
+    ) {
+        Equipaje equipaje = equipajeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Equipaje no encontrado con ID: " + id));
+
+        equipaje.setAlto(alto);
+        equipaje.setLargo(largo);
+        equipaje.setAncho(ancho);
+        equipaje.setPeso(peso);
+        equipaje.setTipo(tipo);
+        equipaje.setUbicacion(ubicacion);
+        equipaje.setValor(valor);
+
+        return equipajeRepository.save(equipaje);
     }
 }

@@ -11,25 +11,25 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "pasajero")
-public class Pasajero {
+@Table(name = "vuelo")
+public class Vuelo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String nombre;
+    private String numeroVuelo;
 
     @Column(nullable = false)
-    private String apellido;
-
-    @Column(nullable = false, unique = true)
-    private String numeroPasaporte;
+    private String origen;
 
     @Column(nullable = false)
-    private String nacionalidad;
+    private String destino;
 
-    @OneToMany(mappedBy = "pasajero")
+    @Column(nullable = false)
+    private String fechaSalida;
+
+    @OneToMany(mappedBy = "vuelo")
     private List<Equipaje> equipajes;
 }

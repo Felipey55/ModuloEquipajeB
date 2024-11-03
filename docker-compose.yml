@@ -1,28 +1,29 @@
 version: '3.8'
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: mysql_container
+  postgres:
+    image: postgres:13
+    container_name: postgres_container
     environment:
-      MYSQL_ROOT_PASSWORD: Carlos1085896202
-      MYSQL_DATABASE: graphqlequipaje
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: equipaje
     ports:
-      - "3307:3306"
+      - "5432:5432"
     volumes:
-      - mysql-data:/var/lib/mysql
+      - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      test: ["CMD-SHELL", "pg_isready -U root"]
       interval: 10s
       retries: 3
 
-  graphqlequipaje:
+  equipaje:
     build: .
     ports:
       - "8080:8080"
     depends_on:
-      - mysql
+      - postgres
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/graphqlequipaje
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/equipaje
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: Carlos1085896202
 
@@ -41,4 +42,4 @@ services:
       - prometheus
 
 volumes:
-  mysql-data:
+  postgres-data:
