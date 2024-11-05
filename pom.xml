@@ -79,12 +79,10 @@
 			<artifactId>spring-graphql-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
 	</dependencies>
 
-
-
 	<build>
+		<finalName>ModuloEquipageB-0.0.1-SNAPSHOT</finalName>
 		<plugins>
 			<!-- Spring Boot Maven Plugin -->
 			<plugin>

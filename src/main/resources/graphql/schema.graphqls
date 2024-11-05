@@ -44,9 +44,7 @@ type Mutation {
         peso: Float,
         tipo: String!,
         ubicacion: String!,
-        valor: Float!,
-        vueloId: ID!,
-        pasajeroId: ID!
+        valor: Float!
     ): Equipaje
 
     # Eliminar equipaje por ID
