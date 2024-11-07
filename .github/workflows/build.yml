@@ -100,3 +100,5 @@ jobs:
           curl -XPOST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
           -d '{"tag_name": "v1", "name": "Release v1", "body": "Initial release", "draft": false, "prerelease": false}' \
           https://api.github.com/repos/felipey55/ModuloEquipajeB/releases
+
+
