@@ -49,7 +49,7 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Analyze with SonarCloud
-        run: mvn -B verify sonar:sonar -Dsonar.projectKey=felipey55_labcicd -Dsonar.organization=felipey55 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN
+        run: mvn -B verify sonar:sonar -Dsonar.projectKey=felipey55_ModuloEquipajeB -Dsonar.organization=felipey55 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -77,8 +77,8 @@ jobs:
       - name: Upload JAR as artifact
         uses: actions/upload-artifact@v3
         with:
-          name: labcicd-jar
-          path: target/labcicd-0.0.1-SNAPSHOT.jar
+          name: ModuloEquipajeB-jar
+          path: target/ModuloEquipajeB-0.0.1-SNAPSHOT.jar
 
   deploy:
     needs: build
@@ -89,14 +89,14 @@ jobs:
       - name: Download JAR artifact
         uses: actions/download-artifact@v3
         with:
-          name: labcicd-jar
+          name: ModuloEquipajeB-jar
           path: target
       - name: List target directory before zipping
         run: ls -l target/
       - name: Create ZIP file
-        run: zip -j app.zip target/labcicd-0.0.1-SNAPSHOT.jar
+        run: zip -j app.zip target/ModuloEquipajeB-0.0.1-SNAPSHOT.jar
       - name: Upload ZIP to GitHub Releases (or another service if needed)
         run: |
           curl -XPOST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
           -d '{"tag_name": "v1", "name": "Release v1", "body": "Initial release", "draft": false, "prerelease": false}' \
-          https://api.github.com/repos/felipey55/labcicd/releases
+          https://api.github.com/repos/felipey55/ModuloEquipajeB/releases
