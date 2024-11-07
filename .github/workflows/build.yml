@@ -1,39 +1,102 @@
-name: SonarCloud
+# Workflow name
+name: CI/CD Pipeline
+
 on:
+  workflow_dispatch:
   push:
     branches:
-      - master
-  pull_request:
-    types: [opened, synchronize, reopened]
+      - main
 
 jobs:
-  build:
-    name: Build and analyze
+  tests:
+    name: Unit tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v1
+      - name: Set up JDK
+        uses: actions/setup-java@v1
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: Set up JDK 11
-        uses: actions/setup-java@v4
+          java-version: '11'
+      - name: Cache Maven packages
+        uses: actions/cache@v1
         with:
-          java-version: 11
-          distribution: 'zulu' # Alternative distribution options are available.
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Run Tests
+        run: mvn -B test
+
+  sonar:
+    name: SonarCloud analysis
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11'
       - name: Cache SonarCloud packages
-        uses: actions/cache@v4
+        uses: actions/cache@v1
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
       - name: Cache Maven packages
-        uses: actions/cache@v4
+        uses: actions/cache@v1
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Build and analyze
+      - name: Analyze with SonarCloud
+        run: mvn -B verify sonar:sonar -Dsonar.projectKey=felipey55_labcicd -Dsonar.organization=felipey55 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Felipey55-ModuloEquipaje -Dsonar.jacoco.reportPaths=target/jacoco.exec || true
-        working-directory: ./ModuloEquipaje
+
+  build:
+    needs: sonar
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+      - name: Cache Maven packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build with Maven
+        run: mvn -B package -DskipTests --file pom.xml
+      - name: List target directory
+        run: ls -l target/
+      - name: Upload JAR as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: labcicd-jar
+          path: target/labcicd-0.0.1-SNAPSHOT.jar
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Download JAR artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: labcicd-jar
+          path: target
+      - name: List target directory before zipping
+        run: ls -l target/
+      - name: Create ZIP file
+        run: zip -j app.zip target/labcicd-0.0.1-SNAPSHOT.jar
+      - name: Upload ZIP to GitHub Releases (or another service if needed)
+        run: |
+          curl -XPOST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -d '{"tag_name": "v1", "name": "Release v1", "body": "Initial release", "draft": false, "prerelease": false}' \
+          https://api.github.com/repos/felipey55/labcicd/releases
