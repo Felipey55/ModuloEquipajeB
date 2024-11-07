@@ -17,6 +17,12 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: '11'
+      - name: Set up Maven
+        run: |
+          wget https://apache.mirrors.hoobly.com/maven/maven-3/3.8.6/binaries/apache-maven-3.8.6-bin.tar.gz
+          tar -xvf apache-maven-3.8.6-bin.tar.gz
+          sudo mv apache-maven-3.8.6 /opt/maven
+          sudo ln -s /opt/maven/bin/mvn /usr/bin/mvn
       - name: Cache Maven packages
         uses: actions/cache@v1
         with:
@@ -24,7 +30,9 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Run Tests
-        run: mvn -B test
+        run: mvn -B test -X  # Agregamos el flag -X para obtener más información de depuración.
+      - name: List Surefire reports
+        run: ls -l target/surefire-reports/  # Para depurar informes de las pruebas.
 
   sonar:
     name: SonarCloud analysis
@@ -100,5 +108,3 @@ jobs:
           curl -XPOST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
           -d '{"tag_name": "v1", "name": "Release v1", "body": "Initial release", "draft": false, "prerelease": false}' \
           https://api.github.com/repos/felipey55/ModuloEquipajeB/releases
-
-
