@@ -33,6 +33,18 @@ type Query {
 
     # Buscar equipaje por ID
     equipajePorId(id: ID!): Equipaje
+
+    # Obtener todos los pasajeros
+    todosLosPasajeros: [Pasajero]
+
+    # Buscar pasajero por ID
+    pasajeroPorId(id: ID!): Pasajero
+
+    # Obtener todos los vuelos
+    todosLosVuelos: [Vuelo]
+
+    # Buscar vuelo por ID
+    vueloPorId(id: ID!): Vuelo
 }
 
 type Mutation {
@@ -63,4 +75,28 @@ type Mutation {
         vueloId: ID,
         pasajeroId: ID
     ): Equipaje
+
+    # Agregar nuevo pasajero
+    agregarPasajero(
+        nombre: String!,
+        apellido: String!,
+        numeroPasaporte: String!,
+        nacionalidad: String!
+    ): Pasajero
+
+    # Eliminar pasajero por ID
+    eliminarPasajero(id: ID!): Pasajero
+
+    # Agregar nuevo vuelo
+    agregarVuelo(
+        numeroVuelo: String!,
+        origen: String!,
+        destino: String!,
+        fechaSalida: String!
+    ): Vuelo
+
+    # Eliminar vuelo por ID
+    eliminarVuelo(id: ID!): Vuelo
 }
+
+
