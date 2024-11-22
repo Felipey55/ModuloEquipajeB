@@ -62,7 +62,7 @@ Este proyecto incluye la implementación de un sistema de gestión de equipaje b
 
 3. Configura la base de datos:
 
-    - Importa el archivo de la base de datos que se encuentra en el directorio `database` del proyecto. Sigue las instrucciones en la sección [Importar Base de Datos](#importar-base-de-datos) de este README.
+    - Sigue las indicaciones de [Importar Base de Datos](#importar-base-de-datos) de este README.
 
 4. Configura las propiedades de conexión en el archivo `application.properties` o `application.yml` del proyecto. Asegúrate de actualizar las credenciales de la base de datos:
     ```
